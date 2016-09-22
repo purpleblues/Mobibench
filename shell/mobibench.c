@@ -1275,6 +1275,9 @@ char* get_journal_mode_string(int journal_mode)
 		case 5:
 			ret_str = "OFF";
 			break;
+        case 6:
+            ret_str = "WALDIO";
+            break;
 		default:
 			ret_str = "TRUNCATE";
 			break;		
@@ -1404,8 +1407,8 @@ int thread_main_db(void* arg)
 		show_progress(i*100/db_transactions);
 	}
 
-	/* Forced checkpointing for WAL mode */
-	if(db_journal_mode == 3)
+	/* Forced checkpointing for WAL mode and WALDIO mode */
+	if(db_journal_mode == 3 || db_journal_mode == 6)
 	{
 		sqlite3_wal_checkpoint(db, NULL);
 	}
@@ -2174,7 +2177,7 @@ char *help[] = {
 "           -d  enable DB test mode (0=insert, 1=update, 2=delete)",
 "           -n  set number of DB transaction (default=10)",
 "           -j  set SQLite journal mode (0=DELETE, 1=TRUNCATE, 2=PERSIST, 3=WAL, 4=MEMORY, ",
-"                                        5=OFF) (default=1)",
+"                                        5=OFF, 6=WALDIO) (default=1)",
 "           -s  set SQLite synchronous mode (0=OFF, 1=NORMAL, 2=FULL) (default=2)",
 "           -g  set replay script (output of MobiGen)",
 "           -q  do not display progress(%) message",
